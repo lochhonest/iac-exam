@@ -6,15 +6,17 @@ param appServicePlanName string
   'nonprod'
   'prod'
 ])
+
+param storageAccountNames array = ['lorenz-finalexam1', 'lorenz-finalexam2']
 param environmentType string
 
 var appServicePlanSkuName = (environmentType == 'prod') ? 'P2V3' : 'F1'
 
-resource StorageAccount1 'Microsoft.Web/serverFarms@2022-03-01' = {
-  name: lorenz-finalexam1
+resource StorageAccountResources1 'Microsoft.Web/serverFarms@2022-03-01' = [for storageAccount in storageAccountNames: {
+  name: storageAccount
   location: location
   sku: {
-    name: StorageAccount1SkuName
+    name: appServicePlanSkuName
   }
   kind: 'StorageV2'
   properties: {
@@ -22,13 +24,6 @@ resource StorageAccount1 'Microsoft.Web/serverFarms@2022-03-01' = {
   }
 }
 
-resource SotrageAccount2 'Microsoft.Web/sites@2022-03-01' = {
-name: lorenz-finalexam2
-location: location
-kind: 'StorageV1'
-properties: {
-  accessTier: 'Hot'
-  }
-}
+
 
 output appServiceAppHostName string = appServiceApp.properties.defaultHostName
